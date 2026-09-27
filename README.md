@@ -256,8 +256,78 @@ PlatformIO only builds what's in the `src/` folder, so the scan temporarily take
 
 <img src=Extras/Renogy_NodeRED_flows.jpg width="75%"/>
 
-> 🔧 To be documented — Node-RED flow to subscribe to the MQTT topic, parse the payload, and write fields to InfluxDB for display in a Grafana dashboard.
 
+A ready-to-import Node-RED flow is included in [`Extras/renogy_flows.json`](Extras/renogy_flows.json). It subscribes to the Renogy MQTT topic, writes every reading to InfluxDB, and displays the live values on a FlowFuse Dashboard 2.0 page.
+
+![Node-RED flow](Extras/Renogy_NodeRED_flows.jpg)
+
+### What the flow does
+
+| Node | Purpose |
+| ---- | ------- |
+| **Renogy Wonderer** (MQTT in) | Subscribes to `OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer` |
+| **Parse Wonderer** (function) | Converts the JSON payload to InfluxDB line protocol |
+| **InfluxDB Wonderer** (http request) | Writes the reading to InfluxDB |
+| **Wonderer Dashboard msgs** (function) | Splits the reading into 12 values, one per dashboard widget |
+| **W SOC … W Battery V Min Today** (text) | Dashboard widgets |
+| Green **debug** nodes | Troubleshooting only — all are turned off by default |
+
+### Requirements
+
+- Node-RED with an MQTT broker (e.g. Mosquitto) that your OMG gateway publishes to
+- InfluxDB **1.x** (the flow writes with the 1.x HTTP `/write` API)
+- [FlowFuse Dashboard 2.0](https://dashboard.flowfuse.com/) (`@flowfuse/node-red-dashboard`) — install it from **☰ menu → Manage palette → Install** if you don't have it. This flow does **not** work with the older Dashboard 1.0.
+
+### Importing the flow
+
+1. **Copy the flow** — open [`Extras/renogy_flows.json`](Extras/renogy_flows.json) on GitHub and click the **Copy raw file** button (the two-squares icon at the top right of the file).
+2. **Open the import dialog** — in Node-RED, click **☰ menu → Import**.
+3. **Paste** the flow into the text box.
+4. **Choose "new flow"** at the bottom of the dialog, then click **Import**.
+5. **Drop it on the canvas** — click anywhere to place the group.
+
+### After importing — change these to match your setup
+
+1. **MQTT broker**
+   - Double-click the **Renogy Wonderer** node.
+   - Click the ✏️ pencil next to **Server**.
+   - Set **Server** to your broker's IP address (and username/password under **Security**, if your broker uses them). Click **Update**, then **Done**.
+2. **InfluxDB address and database**
+   - Double-click the **InfluxDB Wonderer** node.
+   - Change the **URL** to your own InfluxDB server and database:
+```
+     http://<your-influxdb-ip>:8086/write?db=<your-database>
+```
+   - The database must already exist. To create one from the `influx` shell: `CREATE DATABASE Sensors`
+3. **Dashboard page** *(only if you already have a Dashboard 2.0 setup)*
+   - Double-click any **W …** text node, then the ✏️ pencil next to **Group**.
+   - Change **Page** to one of your existing pages. All 12 widgets share this group, so this moves them all at once.
+4. Click **Deploy**.
+
+Within about a minute of the transmitter's next reading, the dashboard values should fill in.
+
+> 💡 **Nothing showing up?** Turn on the **complete** debug node (click the square button on its right side), click **Deploy**, and open the **Debug** sidebar (🐞 icon). If you see messages there, MQTT is working and the problem is further along the flow. If not, check the broker settings and the topic.
+
+### Using a Rover 20A (or a second controller)
+
+Change the name `renogy_wonderer` to match the `DEVICE_ID` in `main.cpp` (e.g. `renogy_rover20`) in these places:
+
+- The **topic** in both MQTT in nodes
+- The first line of the **Parse Wonderer** function — this is the InfluxDB measurement name
+
+For two controllers at once, copy the whole group (select it, **Ctrl/Cmd+C**, **Ctrl/Cmd+V**) and make the changes above in the copy.
+
+### Data in InfluxDB
+
+Each reading is written as one point in the measurement `renogy_wonderer` with these fields:
+
+`batt_v`, `batt_a`, `soc`, `solar_v`, `solar_a`, `solar_w`, `batt_t`, `ctrl_t`, `solar_w_max`, `solar_w_min`, `batt_v_max`, `batt_v_min`, `rssi`
+
+> Keep measurement names free of spaces and slashes — both cause problems in Grafana State Timeline panels.
+
+### Grafana
+
+> 🔧 To be documented — a Grafana dashboard for the `renogy_wonderer` measurement.
 ---
 
 ## Home Assistant Integration
