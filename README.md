@@ -1,10 +1,15 @@
-# ESP32-Renogy-LoRa
+# ESP32-S3 XIAO Renogy LoRa
 
 A standalone LoRa transmitter that reads data from a Renogy solar charge controller via RS232 Modbus and transmits it wirelessly to an OpenMQTTGateway (OMG) LoRa gateway. Built for remote monitoring where WiFi is unavailable or impractical.
 
+This is the **Seeed Studio XIAO ESP32-S3 + Wio-SX1262 LoRa Kit** version of the project. The kit's LoRa board plugs directly onto the XIAO, so there's no LoRa wiring, and the whole unit is smaller and cheaper than a DevKit plus a separate LoRa breakout.
+
+> Looking for the original ESP32 DevKit1 + Adafruit RFM95W version? See [ESP32-Renogy-LoRa](https://github.com/billjuv/ESP32-Renogy-LoRa). Both versions send the same payload with the same LoRa settings, so they work with the same gateway and the same Node-RED / MQTT setup.
+
 Tested with:
-- Renogy Wonderer 10A PWM (RNG-CTRL-WND10)
-- Renogy Rover 20A MPPT
+
+- Renogy Wanderer 10A PWM (RNG-CTRL-WND10)
+- Renogy Rover 20A MPPT (tested with the DevKit version; the Modbus code is identical)
 
 Should work with any Renogy charge controller that has an RS232 RJ12 port.
 
@@ -14,89 +19,92 @@ Should work with any Renogy charge controller that has an RS232 RJ12 port.
 
 ## How It Works
 
-The ESP32 polls the charge controller every 60 seconds via Modbus RTU over RS232 (through a MAX3232 level converter), builds a JSON payload, and transmits it via LoRa. The OMG gateway receives the packet and publishes it to MQTT, where it can be picked up by Node-RED, InfluxDB, and Grafana.
+The XIAO polls the charge controller about every 60 seconds via Modbus RTU over RS232 (through a MAX3232 level converter), builds a JSON payload, and transmits it via LoRa. The OMG gateway receives the packet and publishes it to MQTT, where it can be picked up by Node-RED, InfluxDB, and Grafana.
 
 ```
-Renogy controller → RJ12/RS232 → MAX3232 → ESP32 → RFM95W → LoRa RF → OMG gateway → MQTT
+Renogy controller → RJ12/RS232 → MAX3232 → XIAO ESP32-S3 → Wio-SX1262 → LoRa RF → OMG gateway → MQTT
 ```
+
+A hardware watchdog reboots the XIAO automatically if a Modbus or LoRa operation ever hangs, so the unit recovers without a manual power cycle.
 
 ---
 
 ## Hardware
 
-- ESP32 DevKit1
-- Adafruit RFM95W LoRa transceiver (915MHz)
-- MAX3232 TTL/RS232 converter board — [(Part I used)](https://www.amazon.com/dp/B091TN2ZPY?ref=ppx_yo2ov_dt_b_fed_asin_title)
-- MP1584EN DC-DC buck converter — Adjusted to step Renogy RJ12 voltage down to 5V to power the ESP32 [(Part I used)](https://www.amazon.com/dp/B01MQGMOKI?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2&th=1)
-- RJ12 6-wire cable — [(One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)
+- Seeed Studio XIAO ESP32-S3 + Wio-SX1262 LoRa Kit (915MHz, B2B connector version)
+- MAX3232 TTL/RS232 converter board — [(Part I used)](https://www.amazon.com/dp/B091TN2ZPY)
+- MP1584EN DC-DC buck converter — Adjusted to step Renogy RJ12 voltage down to 5V to power the XIAO [(Part I used)](https://www.amazon.com/dp/B01MQGMOKI)
+- RJ12 6-wire cable — [(One like this cut in two)](https://www.amazon.com/dp/B0F9YVVG77)
 
 Related:
-- OMG LoRa Gateway — [(LILYGO LoRa32 915MHz ESP32 Development Board)](https://www.amazon.com/LILYGO-LoRa32-433Mhz-Development-Paxcounter/dp/B09SHRWVNB/ref=sr_1_1?dib=eyJ2IjoiMSJ9.AtA4SX5sQMRx9EvaArXKy60QZlmmxk9hImRj-x_Qk8rvBFpeO9muThruuULU-846Vx-3iCq7dWMWCl_yu2j2Khe3-p4Iab3rjYUMJ7dX-M3n50LaZSgEfWAGOmWnz7vc_I-ep0rsEZm0i6qEFLWm9ylQfEWX7wuf_1JmnFbK5WCITDXlXins-bcn0Slu2RqrZP-2AnFuwnji3k1hDXQRNW7JcEHHeEA6zz5iRrNZ62s.xW7aiOYN-sqfYSBU11yUh3eUZPZGGErpU2juy_AMUO0&dib_tag=se&keywords=ttgo%2Besp32%2Blora&qid=1775087725&sr=8-1&th=1)
+
+- OMG LoRa Gateway — LILYGO LoRa32 915MHz ESP32 Development Board
 
 ---
 
 ## Wiring
 
 ### RJ12 to MAX3232 (RS232 side)
+
 Pins counted right-to-left with contacts facing you.
 
-| RJ12 Pin | Signal | MAX3232 RS232 side |
-|----------|--------|--------------------|
-| Pin 1 | Controller TX | RXD |
-| Pin 2 | Controller RX | TXD |
-| Pin 3 | GND | GND |
-| Pin 4 | GND | GND |
-| Pin 5 | PWR | +11–15V * |
-| Pin 6 | PWR | +11–15V * |
+| RJ12 Pin | Signal        | MAX3232 RS232 side |
+| -------- | ------------- | ------------------ |
+| Pin 1    | Controller TX | RXD                |
+| Pin 2    | Controller RX | TXD                |
+| Pin 3    | GND           | GND                |
+| Pin 4    | GND           | GND                |
+| Pin 5    | PWR           | +11–15V \*         |
+| Pin 6    | PWR           | +11–15V \*         |
 
-\* ~11V on Wonderer 10A, ~15V on Rover 20A
+\* ~11V on Wanderer 10A, ~15V on Rover 20A
 
-> ⚠️ Never connect RS232 lines directly to the ESP32 — the voltage levels will damage it. Always use the MAX3232 converter.
+> ⚠️ Never connect RS232 lines directly to the XIAO — the voltage levels will damage it. Always use the MAX3232 converter.
 
-> ⚠️ Never plug a USB cable from your computer into the ESP32 for programming while the board is also powered from the controller's RJ12 port. This could damage your computer.
+> ⚠️ Never plug a USB cable from your computer into the XIAO for programming while the board is also powered from the controller's RJ12 port. This could damage your computer.
 
-### MAX3232 (TTL side) to ESP32
+### MAX3232 (TTL side) to XIAO ESP32-S3
 
-| MAX3232 TTL | ESP32 GPIO |
-|-------------|------------|
-| TX | GPIO 16 (RX2) |
-| RX | GPIO 17 (TX2) |
-| VCC | 3.3V |
-| GND | GND |
+| MAX3232 TTL | XIAO Pin | GPIO    |
+| ----------- | -------- | ------- |
+| TX          | D7 (RX)  | GPIO 44 |
+| RX          | D6 (TX)  | GPIO 43 |
+| VCC         | 3V3      | —       |
+| GND         | GND      | —       |
 
-### RFM95W to ESP32
+> If Modbus reads fail with error `0xE2` (timeout) after wiring, the first thing to check is whether TX and RX are swapped.
 
-| RFM95W | ESP32 GPIO |
-|--------|------------|
-| MOSI | GPIO 23 |
-| MISO | GPIO 19 |
-| SCK | GPIO 18 |
-| CS | GPIO 5 |
-| RST | GPIO 14 |
-| G0 (DIO0) | GPIO 2 |
-| VIN | 3.3V |
-| GND | GND |
+### Wio-SX1262 LoRa board
 
-> Note: The pin labeled **G0** on the Adafruit RFM95W breakout is DIO0. EN can be left unconnected.
+No wiring needed — it plugs onto the XIAO through the kit's B2B connector. For reference, the pins used in `main.cpp` are:
+
+| Wio-SX1262 | XIAO GPIO |
+| ---------- | --------- |
+| NSS (CS)   | GPIO 41   |
+| DIO1       | GPIO 39   |
+| RESET      | GPIO 42   |
+| BUSY       | GPIO 40   |
+| SCK / MISO / MOSI | GPIO 7 / 8 / 9 (XIAO default SPI) |
 
 ---
 
 ## Power
 
-Both controllers have been tested using their RJ12 RS232 port (pins 4–6) to power the ESP32 via a buck converter:
+Both controllers have been tested using their RJ12 RS232 port (pins 5–6) to power the board via a buck converter, with the buck converter's 5V output going to the XIAO's **5V** pin:
 
-| Controller | RJ12 Voltage | Notes |
-|------------|--------------|-------|
-| Wonderer 10A | ~11.3V | Step down to 5V with buck converter |
-| Rover 20A | ~15.1V | Step down to 5V with buck converter |
+| Controller   | RJ12 Voltage | Notes                               |
+| ------------ | ------------ | ----------------------------------- |
+| Wanderer 10A | ~11.3V       | Step down to 5V with buck converter |
+| Rover 20A    | ~15.1V       | Step down to 5V with buck converter |
 
-> ⚠️ Do NOT connect RJ12 pins 4–6 directly to the ESP32 — the voltage will damage it. Always use a buck converter to step down to 5V first.
+> ⚠️ Do NOT connect RJ12 power pins directly to the XIAO — the voltage will damage it. Always use a buck converter to step down to 5V first, and set its output voltage **before** connecting the XIAO.
 
 ---
 
 ## Modbus Settings
 
 Both controllers tested at:
+
 - **Baud rate:** 9600
 - **Slave address:** 0xFF
 
@@ -106,14 +114,20 @@ Both controllers tested at:
 
 ## LoRa Settings
 
-Matched to an existing OpenMQTTGateway LoRa gateway:
+Matched to an existing OpenMQTTGateway LoRa gateway (same as the DevKit version):
 
-| Setting | Value |
-|---------|-------|
-| Frequency | 915 MHz |
-| Spreading Factor | SF7 |
-| Bandwidth | 125 kHz |
-| Sync Word | 0x12 |
+| Setting          | Value   |
+| ---------------- | ------- |
+| Frequency        | 915 MHz |
+| Spreading Factor | SF7     |
+| Bandwidth        | 125 kHz |
+| Coding Rate      | 4/5     |
+| Preamble Length  | 8       |
+| Sync Word        | 0x12    |
+| CRC              | On      |
+| Output Power     | 14 dBm  |
+
+> The SX1262 on this kit uses the [RadioLib](https://github.com/jgromes/RadioLib) library instead of the `sandeepmistry/LoRa` library used by the RFM95W version. RadioLib translates sync word `0x12` so the SX1262 stays compatible with SX127x-based gateways like the LILYGO LoRa32.
 
 ---
 
@@ -122,11 +136,13 @@ Matched to an existing OpenMQTTGateway LoRa gateway:
 The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in `main.cpp` — change as desired):
 
 **Topic:**
+
 ```
 OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer
 ```
 
 **Payload example:**
+
 ```json
 {
   "value": "renogy_wonderer",
@@ -150,38 +166,62 @@ OMGhome/OMG_ESP32_LORA/LORAtoMQTT/renogy_wonderer
 }
 ```
 
-> Note: `batt_t` will always read 0 on the Wonderer 10A as it has no external battery temperature sensor connection. The Rover 20A returned a value even without a temperature probe attached.
+`rssi`, `snr`, `pferror`, and `packetSize` are added by the OMG gateway, not the transmitter.
+
+> Note: `batt_t` will always read 0 on the Wanderer 10A as it has no external battery temperature sensor connection. The Rover 20A returned a value even without a temperature probe attached.
+
+> Note: Nothing is transmitted until a Modbus read succeeds. If the gateway shows nothing, check the Serial Monitor for Modbus errors first.
 
 ---
 
 ## PlatformIO Setup
 
 **platformio.ini:**
+
 ```ini
-[env:esp32dev]
-platform = espressif32
-board = esp32dev
+[env:seeed_xiao_esp32s3]
+platform = espressif32@6.6.0
+board = seeed_xiao_esp32s3
 framework = arduino
 monitor_speed = 115200
 lib_deps =
-    sandeepmistry/LoRa @ ^0.8.0
+    jgromes/RadioLib
     4-20ma/ModbusMaster @ ^2.0.1
 ```
 
 Set the device ID in `main.cpp` to match your controller:
+
 ```cpp
-// For Wonderer 10A:
+// For Wanderer 10A:
 #define DEVICE_ID "renogy_wonderer"
 
 // For Rover 20A:
 #define DEVICE_ID "renogy_rover20"
 ```
 
+> ⚠️ If you run more than one transmitter, give each a unique `DEVICE_ID`. Two units with the same ID publish to the same MQTT topic and their readings get mixed together.
+
+### Serial Monitor
+
+On the XIAO ESP32-S3, the USB-C port is the Serial Monitor (`Serial`). The Renogy uses a separate hardware UART (`Serial1`) on D6/D7, so both work at the same time.
+
+With nothing connected to the controller, you'll see repeated `Modbus error: 0xE2` (response timed out) — that's expected and confirms the program is running.
+
+### Resetting the XIAO without the reset button
+
+The reset button is hard to reach with the LoRa board mounted. With the Serial Monitor closed, you can reset over USB from a PlatformIO terminal (replace the port with yours — find it with `ls /dev/cu.usbmodem*`):
+
+```
+pio pkg exec -p tool-esptoolpy -- esptool.py --chip esp32s3 --port /dev/cu.usbmodem101 --after hard_reset chip_id
+```
+
 ---
 
 ## Scan Utility
 
-If your controller doesn't respond, use the included scan utility (`scan.cpp`) to find the correct baud rate and Modbus address. It tries the most common combinations first before falling back to a full 0x00–0xFF sweep.
+If your controller doesn't respond, use the included scan utility (in `Tools/`) to find the correct baud rate and Modbus address. It tries the most common combinations first before falling back to a full 0x00–0xFF sweep.
+
+> The scan utility was originally written for the DevKit version. Make sure its UART setup uses `Serial1` on GPIO 44 (RX) / GPIO 43 (TX) before running it on the XIAO.
 
 ---
 
@@ -217,14 +257,16 @@ Repeat for each field (`solar_v`, `solar_w`, `ctrl_t`, `solar_w_max`, `batt_v_ma
 
 ## Notes
 
-- The Wonderer 10A responds to Modbus at 2400 baud in some configurations and 9600 in others — if 9600 fails, try 2400.
-- Some sources report that the Wonderer 10A cannot supply enough power for an ESP32 from its RJ12 port. The unit purchased in 2026 worked fine.
-- Signal range tested at -79 RSSI at the far end of a residential yard using a small coil antenna oriented horizontally. A vertical antenna will improve this.
+- The Wanderer 10A responds to Modbus at 2400 baud in some configurations and 9600 in others — if 9600 fails, try 2400.
+- Some sources report that the Wanderer 10A cannot supply enough power for an ESP32 from its RJ12 port. The unit purchased in 2026 worked fine.
+- GPIO 43 (D6) is also where the ESP32-S3 prints its boot messages, so the controller may see a brief burst of garbage at power-up. It's ignored, and the first Modbus read doesn't happen until about a minute later.
 - The 60-second poll interval is conservative and well within LoRa duty cycle limits.
 
 ---
 
 ## Related Projects
 
+- [ESP32-Renogy-LoRa](https://github.com/billjuv/ESP32-Renogy-LoRa) — the original ESP32 DevKit1 + RFM95W version of this project
 - [wrybread/ESP32ArduinoRenogy](https://github.com/wrybread/ESP32ArduinoRenogy) — inspiration for the Modbus register approach
 - [OpenMQTTGateway](https://github.com/1technophile/OpenMQTTGateway) — the LoRa gateway firmware
+- [RadioLib](https://github.com/jgromes/RadioLib) — LoRa library used for the SX1262
