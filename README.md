@@ -46,7 +46,7 @@ Related:
 ## Wiring
 
 ### Breadboard Example
-<img src=Attachments/Extras/XIAO_Renogy_breadboard.jpg width="50%"/>
+<img src=Extras/XIAO_Renogy_breadboard.jpg width="50%"/>
 
 ### RJ12 to MAX3232 (RS232 side)
 
