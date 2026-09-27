@@ -254,6 +254,8 @@ PlatformIO only builds what's in the `src/` folder, so the scan temporarily take
 
 ## Node-RED / InfluxDB / Grafana
 
+<img src=Extras/Renogy_NodeRED_flows.jpg width="75%"/>
+
 > 🔧 To be documented — Node-RED flow to subscribe to the MQTT topic, parse the payload, and write fields to InfluxDB for display in a Grafana dashboard.
 
 ---
