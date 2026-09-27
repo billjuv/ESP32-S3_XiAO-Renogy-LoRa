@@ -133,7 +133,7 @@ Matched to an existing OpenMQTTGateway LoRa gateway (same as the DevKit version)
 
 ## MQTT Output
 
-The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in `main.cpp` — change as desired):
+The transmitter publishes to your OMG gateway, which forwards to MQTT. OMG looks for the `"value"` field in the payload to create a dedicated subtopic automatically (the name is set in `main.cpp` — change as desired (*I'm keeping the misspelled "wonderer", as opposed to "wanderer")):
 
 **Topic:**
 
