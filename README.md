@@ -38,15 +38,14 @@ A hardware watchdog reboots the XIAO automatically if a Modbus or LoRa operation
 - RJ12 6-wire cable — [(Amazon link)](https://www.amazon.com/dp/B0F9YVVG77)
 
 Related:
-
-- OMG LoRa Gateway — LILYGO LoRa32 915MHz ESP32 Development Board
+- OMG LoRa Gateway — [(LILYGO LoRa32 915MHz ESP32 Development Board)](https://www.amazon.com/LILYGO-LoRa32-433Mhz-Development-Paxcounter/dp/B09SHRWVNB/ref=sr_1_1?dib=eyJ2IjoiMSJ9.AtA4SX5sQMRx9EvaArXKy60QZlmmxk9hImRj-x_Qk8rvBFpeO9muThruuULU-846Vx-3iCq7dWMWCl_yu2j2Khe3-p4Iab3rjYUMJ7dX-M3n50LaZSgEfWAGOmWnz7vc_I-ep0rsEZm0i6qEFLWm9ylQfEWX7wuf_1JmnFbK5WCITDXlXins-bcn0Slu2RqrZP-2AnFuwnji3k1hDXQRNW7JcEHHeEA6zz5iRrNZ62s.xW7aiOYN-sqfYSBU11yUh3eUZPZGGErpU2juy_AMUO0&dib_tag=se&keywords=ttgo%2Besp32%2Blora&qid=1775087725&sr=8-1&th=1)
 
 ---
 
 ## Wiring
 
 ### Breadboard Example
-<img src=Extras/XIAO_Renogy_breadboard.jpg width="75%"/>
+<img src=Extras/XIAO_Renogy_breadboard.jpg width="100%"/>
 
 ### RJ12 to MAX3232 (RS232 side)
 
