@@ -93,7 +93,7 @@ No wiring needed — it plugs onto the XIAO through the kit's B2B connector. For
 
 ## Power
 
-Both controllers have been tested using their RJ12 RS232 port (pins 5–6) to power the board via a buck converter, with the buck converter's 5V output going to the XIAO's **5V** pin:
+Both controllers have been tested using their RJ12 RS232 port (pins 5–6) to power the board via a buck converter, with the buck converter's output adjusted to 5V going to the XIAO's **5V** pin:
 
 | Controller   | RJ12 Voltage | Notes                               |
 | ------------ | ------------ | ----------------------------------- |
