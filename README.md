@@ -46,8 +46,7 @@ Related:
 ## Wiring
 
 ### Breadboard Example
-<img src=Attachments/Extras/()
- width="50%"/>
+<img src=Extras/XIAO_Renogy_breadboard.jpg width="75%"/>
 
 ### RJ12 to MAX3232 (RS232 side)
 
@@ -224,9 +223,32 @@ pio pkg exec -p tool-esptoolpy -- esptool.py --chip esp32s3 --port /dev/cu.usbmo
 
 ## Scan Utility
 
-If your controller doesn't respond, use the included scan utility (in `Tools/`) to find the correct baud rate and Modbus address. It tries the most common combinations first before falling back to a full 0x00–0xFF sweep.
+If your controller doesn't respond (repeated `Modbus error: 0xE2` in the Serial Monitor), use the scan utility in `Tools/scan.cpp` to find the correct baud rate and Modbus address.
 
-> The scan utility was originally written for the DevKit version. Make sure its UART setup uses `Serial1` on GPIO 44 (RX) / GPIO 43 (TX) before running it on the XIAO.
+**How it works:**
+
+| Pass | What it tries | Time |
+| ---- | ------------- | ---- |
+| 1 | Common addresses (`0xFF`, `0x01`, `0x60`, `0x0B`) at 9600, 2400, and 4800 baud | ~30 seconds |
+| 2 | Full sweep of every address (`0x01`–`0xFF`) at each baud rate — only if Pass 1 finds nothing | ~9 minutes per baud rate |
+
+The scan stops as soon as the controller answers.
+
+### Running the scan
+
+PlatformIO only builds what's in the `src/` folder, so the scan temporarily takes the place of `main.cpp`:
+
+1. **Move `main.cpp` out** — drag `src/main.cpp` somewhere safe, like your Desktop.
+2. **Copy the scanner in** — copy `Tools/scan.cpp` into `src/`.
+3. **Upload** and open the Serial Monitor.
+4. **Wait for the result:**
+```
+   *** FOUND IT! Baud: 9600  Address: 0xFF
+```
+5. **Put things back** — delete `src/scan.cpp` and return `main.cpp` to `src/`.
+6. **Update `main.cpp`** if the result differs from the defaults: change `RENOGY_ADDR` for the address, and the `9600` in `Serial1.begin(...)` for the baud rate. Then upload again.
+
+> 💡 If the scan finishes with `no response found`, the most likely cause is TX and RX swapped between the MAX3232 and the XIAO. Swap the two wires and scan again.
 
 ---
 
