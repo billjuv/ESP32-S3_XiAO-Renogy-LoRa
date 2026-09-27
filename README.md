@@ -254,8 +254,7 @@ PlatformIO only builds what's in the `src/` folder, so the scan temporarily take
 
 ## Node-RED / InfluxDB / Grafana
 
-<img src=Extras/Renogy_NodeRED_flows.jpg width="75%"/>
-
+> NOTE: Excuse the typo for all the "wonderer"s (instead of "wanderer") - correct them if you see fit.
 
 A ready-to-import Node-RED flow is included in [`Extras/renogy_flows.json`](Extras/renogy_flows.json). It subscribes to the Renogy MQTT topic, writes every reading to InfluxDB, and displays the live values on a FlowFuse Dashboard 2.0 page.
 
