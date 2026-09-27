@@ -250,14 +250,6 @@ PlatformIO only builds what's in the `src/` folder, so the scan temporarily take
 
 > 💡 If the scan finishes with `no response found`, the most likely cause is TX and RX swapped between the MAX3232 and the XIAO. Swap the two wires and scan again.
 
-## Scan Utility
-
-If your controller doesn't respond, use the included scan utility (in `Tools/`) to find the correct baud rate and Modbus address. It tries the most common combinations first before falling back to a full 0x00–0xFF sweep.
-
-> The scan utility was originally written for the DevKit version. Make sure its UART setup uses `Serial1` on GPIO 44 (RX) / GPIO 43 (TX) before running it on the XIAO.
-
----
-
 ## Node-RED / InfluxDB / Grafana
 
 > 🔧 To be documented — Node-RED flow to subscribe to the MQTT topic, parse the payload, and write fields to InfluxDB for display in a Grafana dashboard.
