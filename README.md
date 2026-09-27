@@ -326,7 +326,8 @@ Each reading is written as one point in the measurement `renogy_wonderer` with t
 
 ### Grafana
 
-> 🔧 To be documented — a Grafana dashboard for the `renogy_wonderer` measurement.
+> 🔧 Grafana dashboards, in addition to the Node-RED dashboard, take advantage of saving the data to InfluxDB for time-based charts. I haven't included a sample but setting one up is like any other basic Grafana visualization.
+
 ---
 
 ## Home Assistant Integration
