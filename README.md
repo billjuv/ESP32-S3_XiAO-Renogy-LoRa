@@ -250,6 +250,8 @@ PlatformIO only builds what's in the `src/` folder, so the scan temporarily take
 
 > 💡 If the scan finishes with `no response found`, the most likely cause is TX and RX swapped between the MAX3232 and the XIAO. Swap the two wires and scan again.
 
+---
+
 ## Node-RED / InfluxDB / Grafana
 
 > 🔧 To be documented — Node-RED flow to subscribe to the MQTT topic, parse the payload, and write fields to InfluxDB for display in a Grafana dashboard.
