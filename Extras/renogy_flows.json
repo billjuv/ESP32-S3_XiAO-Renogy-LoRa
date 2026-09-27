@@ -511,7 +511,7 @@
         "width": 3,
         "height": 1,
         "name": "W Battery V Max Today",
-        "label": "Battery V Max Today",
+        "label": "Battery V Max Today (V)",
         "format": "{{msg.payload}}°C",
         "layout": "",
         "style": false,
@@ -536,7 +536,7 @@
         "width": 3,
         "height": 1,
         "name": "W Battery V Min Today",
-        "label": "Battery V Min Today ",
+        "label": "Battery V Min Today (V)",
         "format": "{{msg.payload}}dBm",
         "layout": "",
         "style": false,
@@ -600,7 +600,7 @@
     {
         "id": "38be31a367182a97",
         "type": "ui-group",
-        "name": "Renogy Wonderer (10A) / 10 Watt PV Panel / 7Ah LiFePO4",
+        "name": "Renogy Wanderer (10A) / 10 Watt PV Panel / 7Ah LiFePO4",
         "page": "9dbe01eceba2d622",
         "width": 6,
         "height": 1,
@@ -687,7 +687,7 @@
         }
     },
     {
-        "id": "b47204e792b0315e",
+        "id": "16511ceef10c91d4",
         "type": "global-config",
         "env": [],
         "modules": {
