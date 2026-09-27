@@ -34,7 +34,7 @@ A hardware watchdog reboots the XIAO automatically if a Modbus or LoRa operation
 - Seeed Studio XIAO ESP32-S3 + Wio-SX1262 LoRa Kit [(915MHz, B2B connector version)]https://www.seeedstudio.com/Wio-SX1262-with-XIAO-ESP32S3-p-5982.html?srsltid=AfmBOoogf2tGbOi46uP2sMmXXRjYaHeICa5PO6nOsImP6Z5di_YLacmd
 - MAX3232 TTL/RS232 converter board — [(Part I used)](https://www.amazon.com/dp/B091TN2ZPY)
 - MP1584EN DC-DC buck converter — Adjusted to step Renogy RJ12 voltage down to 5V to power the XIAO [(Part I used)](https://www.amazon.com/dp/B01MQGMOKI)
-- RJ12 socket and breakout board — [(Socket I used)]([https://www.amazon.com/dp/B0F9YVVG77](https://www.amazon.com/dp/B0B9BHX7T3?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2)))
+- RJ12 socket and breakout board — [(Socket I used)](https://www.amazon.com/dp/B0B9BHX7T3?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_2)))
 - RJ12 6-wire cable — [(Cable I used)](https://www.amazon.com/dp/B0F9YVVG77)
 
 Related:
