@@ -1,4 +1,5 @@
 # ESP32-S3 XIAO Renogy LoRa
+> 🍄 One of several related projects. See the full list at **[billjuv.github.io](https://billjuv.github.io)**.
 
 A standalone LoRa transmitter that reads data from a Renogy solar charge controller via RS232 Modbus and transmits it wirelessly to an OpenMQTTGateway (OMG) LoRa gateway. Built for remote monitoring where WiFi is unavailable or impractical.
 
